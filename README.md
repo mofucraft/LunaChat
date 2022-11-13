@@ -1,5 +1,16 @@
-LunaChat
+LunaChat (Forked by MofuCraft)
 ========
+
+[![Java CI with Maven](https://github.com/mofucraft/LunaChat/actions/workflows/maven.yml/badge.svg)](https://github.com/mofucraft/LunaChat/actions/workflows/maven.yml)
+
+このリポジトリには幾つかの変更が追加されています。
+
+- [x] PlaceholderAPIへの連携
+- [x] mcMMOでのパーティーチャット使用時に不具合の修正
+
+ダウンロードは[こちら](https://github.com/mofucraft/LunaChat/releases)
+
+---
 
 Build Status : [![Build Status](https://travis-ci.org/ucchyocean/LunaChat.svg?branch=master)](https://travis-ci.org/ucchyocean/LunaChat)
 
