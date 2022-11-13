@@ -14,6 +14,7 @@ import com.github.ucchyocean.lc3.japanize.JapanizeType;
 import com.github.ucchyocean.lc3.member.ChannelMember;
 import com.github.ucchyocean.lc3.util.Utility;
 import com.gmail.nossr50.api.PartyAPI;
+import com.gmail.nossr50.datatypes.chat.ChatChannel;
 import com.gmail.nossr50.events.chat.McMMOPartyChatEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,7 +44,7 @@ public class McMMOBridge implements Listener {
         List<Player> recipients = PartyAPI.getOnlineMembers(event.getParty());
 
         String message = event.getMessage();
-        ChannelMember player = ChannelMember.getChannelMember(event.getAuthor().uuid().toString());
+        ChannelMember player = ChannelMember.getChannelMember(event.getDisplayName(ChatChannel.PARTY));
         LunaChatConfig config = LunaChat.getConfig();
         LunaChatAPI api = LunaChat.getAPI();
 
