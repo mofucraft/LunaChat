@@ -16,6 +16,7 @@ import com.github.ucchyocean.lc3.member.ChannelMemberPlayer;
 import com.github.ucchyocean.lc3.messaging.BukkitChatMessage;
 import com.github.ucchyocean.lc3.util.ClickableFormat;
 import com.github.ucchyocean.lc3.util.Utility;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -390,6 +391,9 @@ public class BukkitEventListener implements Listener {
                 ClickableFormat format;
                 if (config.isEnableNormalChatMessageFormat()) {
                     String f = config.getNormalChatMessageFormat();
+                    if (LunaChatBukkit.getInstance().getPlaceholderAPI() != null) {
+                        f = PlaceholderAPI.setPlaceholders(event.getPlayer(), f);
+                    }
                     format = ClickableFormat.makeFormat(f, ChannelMember.getChannelMember(event.getPlayer()));
                 } else {
                     String f = event.getFormat()
@@ -422,6 +426,9 @@ public class BukkitEventListener implements Listener {
                 // チャットフォーマット装飾の適用
                 if (config.isEnableNormalChatMessageFormat()) {
                     String f = config.getNormalChatMessageFormat();
+                    if (LunaChatBukkit.getInstance().getPlaceholderAPI() != null) {
+                        f = PlaceholderAPI.setPlaceholders(event.getPlayer(), f);
+                    }
                     f = ClickableFormat.replaceForNormalChatFormat(
                             f, ChannelMember.getChannelMember(event.getPlayer()));
                     event.setFormat(Utility.replaceColorCode(f));
@@ -518,6 +525,7 @@ public class BukkitEventListener implements Listener {
         // チャンネル一覧を取得して、参加人数でソートする
         ArrayList<Channel> channels = new ArrayList<>(api.getChannels());
         Collections.sort(channels, new Comparator<Channel>() {
+            @Override
             public int compare(Channel c1, Channel c2) {
                 if (c1.getOnlineNum() == c2.getOnlineNum()) return c1.getName().compareTo(c2.getName());
                 return c2.getOnlineNum() - c1.getOnlineNum();

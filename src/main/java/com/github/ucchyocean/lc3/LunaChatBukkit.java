@@ -17,6 +17,7 @@ import com.github.ucchyocean.lc3.command.LunaChatJapanizeCommand;
 import com.github.ucchyocean.lc3.command.LunaChatMessageCommand;
 import com.github.ucchyocean.lc3.command.LunaChatReplyCommand;
 import com.github.ucchyocean.lc3.member.ChannelMember;
+import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -44,6 +45,7 @@ public class LunaChatBukkit extends JavaPlugin implements PluginInterface {
     private ChannelManager manager;
     private UUIDCacheData uuidCacheData;
 
+    private PlaceholderAPIPlugin placeholderAPI;
     private VaultChatBridge vaultchat;
     private DynmapBridge dynmap;
     private MultiverseCoreBridge multiverse;
@@ -83,6 +85,12 @@ public class LunaChatBukkit extends JavaPlugin implements PluginInterface {
         Plugin temp = getServer().getPluginManager().getPlugin("Vault");
         if (temp != null) {
             vaultchat = VaultChatBridge.load(temp);
+        }
+
+        // Load PlaceholderAPI
+        temp = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
+        if (temp != null) {
+            placeholderAPI = (PlaceholderAPIPlugin) temp;
         }
 
         // Dynmap のロード
@@ -220,6 +228,10 @@ public class LunaChatBukkit extends JavaPlugin implements PluginInterface {
     @Override
     public LunaChatConfig getLunaChatConfig() {
         return config;
+    }
+
+    public PlaceholderAPIPlugin getPlaceholderAPI() {
+        return placeholderAPI;
     }
 
     /**
