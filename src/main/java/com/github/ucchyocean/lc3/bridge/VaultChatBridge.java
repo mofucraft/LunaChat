@@ -56,7 +56,7 @@ public class VaultChatBridge {
      */
     public String getPlayerPrefix(Player player) {
         String prefix = chatPlugin.getPlayerPrefix(player);
-        return (prefix != null) ? prefix.replace("&#", "#") : "";
+        return (prefix != null) ? prefix.replaceAll("&#", "#") : "";
     }
 
     /**
@@ -67,6 +67,6 @@ public class VaultChatBridge {
      */
     public String getPlayerSuffix(Player player) {
         String suffix = chatPlugin.getPlayerSuffix(player);
-        return (suffix != null) ? suffix : "";
+        return (suffix != null) ? suffix.replaceAll("&#", "#") : "";
     }
 }
