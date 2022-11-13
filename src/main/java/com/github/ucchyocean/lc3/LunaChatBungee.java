@@ -12,11 +12,15 @@ import com.github.ucchyocean.lc3.channel.ChannelManager;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.bstats.bungeecord.Metrics;
+import org.bstats.charts.DrilldownPie;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 /**
@@ -47,6 +51,20 @@ public class LunaChatBungee extends Plugin implements PluginInterface {
 
         LunaChat.setPlugin(this);
         LunaChat.setMode(LunaChatMode.BUNGEE);
+
+        // Metrics
+        Metrics metrics = new Metrics(this, 7936);
+        metrics.addCustomChart(new DrilldownPie(
+                "minecraft_server_version", new Callable<Map<String, Map<String, Integer>>>() {
+            @Override
+            public Map<String, Map<String, Integer>> call() throws Exception {
+                Map<String, Map<String, Integer>> map = new HashMap<>();
+                Map<String, Integer> sub = new HashMap<>();
+                sub.put(getProxy().getVersion(), 1);
+                map.put(getProxy().getName(), sub);
+                return map;
+            }
+        }));
 
         // 初期化
         config = new LunaChatConfig(getDataFolder(), getFile());
