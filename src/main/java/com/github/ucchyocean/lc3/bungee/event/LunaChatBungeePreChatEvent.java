@@ -10,11 +10,12 @@ import com.github.ucchyocean.lc3.member.ChannelMember;
 
 /**
  * チャンネルチャットへの発言前に発生するイベント
+ *
  * @author ucchy
  */
 public class LunaChatBungeePreChatEvent extends LunaChatBungeeBaseCancellableEvent {
 
-    private ChannelMember member;
+    private final ChannelMember member;
     private String message;
 
     public LunaChatBungeePreChatEvent(String channelName, ChannelMember member, String message) {
@@ -25,6 +26,7 @@ public class LunaChatBungeePreChatEvent extends LunaChatBungeeBaseCancellableEve
 
     /**
      * 発言を行ったプレイヤーを取得します。
+     *
      * @return 発言したプレイヤー
      */
     public ChannelMember getMember() {
@@ -33,6 +35,7 @@ public class LunaChatBungeePreChatEvent extends LunaChatBungeeBaseCancellableEve
 
     /**
      * 発言内容を取得します。
+     *
      * @return 発言内容
      */
     public String getMessage() {
@@ -41,6 +44,7 @@ public class LunaChatBungeePreChatEvent extends LunaChatBungeeBaseCancellableEve
 
     /**
      * 発言先チャンネルを変更します。
+     *
      * @param channelName 発言先チャンネル名
      */
     public void setChannelName(String channelName) {
@@ -49,15 +53,17 @@ public class LunaChatBungeePreChatEvent extends LunaChatBungeeBaseCancellableEve
 
     /**
      * 発言先チャンネルを変更します。
+     *
      * @param channel 発言先チャンネル
      */
     public void setChannel(Channel channel) {
-        if ( channel == null ) return;
+        if (channel == null) return;
         this.channelName = channel.getName();
     }
 
     /**
      * 発言内容を変更します。
+     *
      * @param message 発言内容
      */
     public void setMessage(String message) {

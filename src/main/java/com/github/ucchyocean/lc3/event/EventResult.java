@@ -5,15 +5,16 @@
  */
 package com.github.ucchyocean.lc3.event;
 
-import java.util.List;
-import java.util.Map;
-
 import com.github.ucchyocean.lc3.LunaChat;
 import com.github.ucchyocean.lc3.channel.Channel;
 import com.github.ucchyocean.lc3.member.ChannelMember;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * イベントの実行結果を格納するクラス
+ *
  * @author ucchy
  */
 public class EventResult {

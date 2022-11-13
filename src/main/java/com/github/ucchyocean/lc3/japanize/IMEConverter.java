@@ -5,31 +5,29 @@
  */
 package com.github.ucchyocean.lc3.japanize;
 
+import com.google.common.io.CharStreams;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.net.URLEncoder;
-
-import com.google.common.io.CharStreams;
+import java.net.*;
 
 /**
  * ひらがなのみの文章を、IMEを使用して変換します。
  * 使用される変換候補は全て第1候補のため、正しくない結果が含まれることもよくあります。
+ *
  * @author ucchy
  */
 public class IMEConverter {
 
     private static final String SOCIAL_IME_URL =
-        "https://www.social-ime.com/api/?string=";
+            "https://www.social-ime.com/api/?string=";
     private static final String GOOGLE_IME_URL =
-        "https://www.google.com/transliterate?langpair=ja-Hira|ja&text=";
+            "https://www.google.com/transliterate?langpair=ja-Hira|ja&text=";
 
     /**
      * GoogleIMEを使って変換する
+     *
      * @param org 変換元
      * @return 変換後
      */
@@ -39,6 +37,7 @@ public class IMEConverter {
 
     /**
      * SocialIMEを使って変換する
+     *
      * @param org 変換元
      * @return 変換後
      * @deprecated SocialIMEが2016年9月1日にサービス終了するため、このAPIは今後呼び出してはならない。
@@ -51,7 +50,7 @@ public class IMEConverter {
     // 変換の実行
     private static String conv(String org, boolean isGoogleIME) {
 
-        if ( org.length() == 0 ) {
+        if (org.length() == 0) {
             return "";
         }
 
@@ -60,16 +59,16 @@ public class IMEConverter {
         try {
             String baseurl;
             String encode;
-            if ( isGoogleIME ) {
-                baseurl = GOOGLE_IME_URL + URLEncoder.encode(org , "UTF-8");
+            if (isGoogleIME) {
+                baseurl = GOOGLE_IME_URL + URLEncoder.encode(org, "UTF-8");
                 encode = "UTF-8";
             } else {
-                baseurl = SOCIAL_IME_URL + URLEncoder.encode(org , "UTF-8");
+                baseurl = SOCIAL_IME_URL + URLEncoder.encode(org, "UTF-8");
                 encode = "EUC_JP";
             }
             URL url = new URL(baseurl);
 
-            urlconn = (HttpURLConnection)url.openConnection();
+            urlconn = (HttpURLConnection) url.openConnection();
             urlconn.setRequestMethod("GET");
             urlconn.setInstanceFollowRedirects(false);
             urlconn.connect();
@@ -92,10 +91,10 @@ public class IMEConverter {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if ( urlconn != null ) {
+            if (urlconn != null) {
                 urlconn.disconnect();
             }
-            if ( reader != null ) {
+            if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) { // do nothing.

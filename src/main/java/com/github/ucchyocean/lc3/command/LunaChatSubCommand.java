@@ -12,23 +12,31 @@ import com.github.ucchyocean.lc3.member.ChannelMember;
 
 /**
  * サブコマンドの抽象クラス
+ *
  * @author ucchy
  */
 public abstract class LunaChatSubCommand {
 
     /**
      * コマンドの種別
+     *
      * @author ucchy
      */
     protected enum CommandType {
 
-        /** 一般ユーザー向けコマンド */
+        /**
+         * 一般ユーザー向けコマンド
+         */
         USER,
 
-        /** チャンネルモデレーター向けコマンド */
+        /**
+         * チャンネルモデレーター向けコマンド
+         */
         MODERATOR,
 
-        /** サーバー管理者向けコマンド */
+        /**
+         * サーバー管理者向けコマンド
+         */
         ADMIN
     }
 
@@ -119,35 +127,40 @@ public abstract class LunaChatSubCommand {
 
     /**
      * コマンドを取得します。
+     *
      * @return コマンド
      */
     public abstract String getCommandName();
 
     /**
      * パーミッションノードを取得します。
+     *
      * @return パーミッションノード
      */
     public abstract String getPermissionNode();
 
     /**
      * コマンドの種別を取得します。
+     *
      * @return コマンド種別
      */
     public abstract CommandType getCommandType();
 
     /**
      * 使用方法に関するメッセージをsenderに送信します。
+     *
      * @param sender コマンド実行者
-     * @param label 実行ラベル
+     * @param label  実行ラベル
      */
     public abstract void sendUsageMessage(
             ChannelMember sender, String label);
 
     /**
      * コマンドを実行します。
+     *
      * @param sender コマンド実行者
-     * @param label 実行ラベル
-     * @param args 実行時の引数
+     * @param label  実行ラベル
+     * @param args   実行時の引数
      * @return コマンドが実行されたかどうか
      */
     public abstract boolean runCommand(

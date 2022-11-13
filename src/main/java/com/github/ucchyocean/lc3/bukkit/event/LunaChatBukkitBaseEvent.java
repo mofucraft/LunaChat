@@ -5,15 +5,15 @@
  */
 package com.github.ucchyocean.lc3.bukkit.event;
 
+import com.github.ucchyocean.lc3.LunaChat;
+import com.github.ucchyocean.lc3.channel.Channel;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.github.ucchyocean.lc3.LunaChat;
-import com.github.ucchyocean.lc3.channel.Channel;
-
 /**
  * 基底イベントクラス
+ *
  * @author ucchy
  */
 public abstract class LunaChatBukkitBaseEvent extends Event {
@@ -23,6 +23,7 @@ public abstract class LunaChatBukkitBaseEvent extends Event {
 
     /**
      * コンストラクタ
+     *
      * @param channelName チャンネル名
      */
     public LunaChatBukkitBaseEvent(String channelName) {
@@ -41,6 +42,7 @@ public abstract class LunaChatBukkitBaseEvent extends Event {
 
     /**
      * チャンネル名を取得する
+     *
      * @return チャンネル名
      */
     public String getChannelName() {
@@ -49,6 +51,7 @@ public abstract class LunaChatBukkitBaseEvent extends Event {
 
     /**
      * チャンネルを取得する
+     *
      * @return チャンネル
      */
     public Channel getChannel() {

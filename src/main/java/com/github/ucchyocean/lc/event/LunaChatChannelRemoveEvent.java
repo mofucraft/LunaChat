@@ -9,12 +9,13 @@ import org.bukkit.command.CommandSender;
 
 /**
  * チャンネル削除イベント
+ *
  * @author ucchy
  * @deprecated Legacy Version
  */
 public class LunaChatChannelRemoveEvent extends LunaChatBaseCancellableEvent {
 
-    private CommandSender sender;
+    private final CommandSender sender;
 
     public LunaChatChannelRemoveEvent(String channelName, CommandSender sender) {
         super(channelName);
@@ -23,6 +24,7 @@ public class LunaChatChannelRemoveEvent extends LunaChatBaseCancellableEvent {
 
     /**
      * チャンネルを削除した人を取得する。
+     *
      * @return チャンネルを削除したCommandSender
      */
     public CommandSender getSender() {

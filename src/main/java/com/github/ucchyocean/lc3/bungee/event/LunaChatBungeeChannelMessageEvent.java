@@ -5,27 +5,28 @@
  */
 package com.github.ucchyocean.lc3.bungee.event;
 
+import com.github.ucchyocean.lc3.member.ChannelMember;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.github.ucchyocean.lc3.member.ChannelMember;
 
 /**
  * チャンネルチャットのメッセージイベント、
  * このイベントはキャンセルできない。
+ *
  * @author ucchy
  */
 public class LunaChatBungeeChannelMessageEvent extends LunaChatBungeeBaseEvent {
 
-    private ChannelMember member;
+    private final ChannelMember member;
     private String message;
     private List<ChannelMember> recipients;
-    private String displayName;
-    private String originalMessage;
+    private final String displayName;
+    private final String originalMessage;
 
     public LunaChatBungeeChannelMessageEvent(String channelName,
-            ChannelMember member, String message, List<ChannelMember> recipients,
-            String displayName, String originalMessage) {
+                                             ChannelMember member, String message, List<ChannelMember> recipients,
+                                             String displayName, String originalMessage) {
         super(channelName);
         this.member = member;
         this.message = message;
@@ -36,6 +37,7 @@ public class LunaChatBungeeChannelMessageEvent extends LunaChatBungeeBaseEvent {
 
     /**
      * 発言したプレイヤー、システムメッセージの場合はnullになることに注意
+     *
      * @return player 発言プレイヤー
      */
     public ChannelMember getMember() {
@@ -44,6 +46,7 @@ public class LunaChatBungeeChannelMessageEvent extends LunaChatBungeeBaseEvent {
 
     /**
      * 置き換えされたメッセージ
+     *
      * @return message メッセージ
      */
     public String getMessage() {
@@ -52,6 +55,7 @@ public class LunaChatBungeeChannelMessageEvent extends LunaChatBungeeBaseEvent {
 
     /**
      * メッセージを受信するプレイヤーリスト
+     *
      * @return recipients プレイヤーリスト
      */
     public List<ChannelMember> getRecipients() {
@@ -60,6 +64,7 @@ public class LunaChatBungeeChannelMessageEvent extends LunaChatBungeeBaseEvent {
 
     /**
      * 発言者の表示名を取得する
+     *
      * @return 発言者の表示名
      */
     public String getDisplayName() {
@@ -68,6 +73,7 @@ public class LunaChatBungeeChannelMessageEvent extends LunaChatBungeeBaseEvent {
 
     /**
      * オリジナルメッセージ（チャットフォーマットを適用していない状態のメッセージ）を取得する
+     *
      * @return オリジナルメッセージ
      */
     public String getOriginalMessage() {
@@ -76,6 +82,7 @@ public class LunaChatBungeeChannelMessageEvent extends LunaChatBungeeBaseEvent {
 
     /**
      * メッセージを上書き設定する
+     *
      * @param message メッセージ
      */
     public void setMessage(String message) {
@@ -84,6 +91,7 @@ public class LunaChatBungeeChannelMessageEvent extends LunaChatBungeeBaseEvent {
 
     /**
      * メッセージ受信者を上書き設定する
+     *
      * @param recipients メッセージ受信者
      */
     public void setRecipients(ArrayList<ChannelMember> recipients) {

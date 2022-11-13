@@ -5,15 +5,16 @@
  */
 package com.github.ucchyocean.lc3;
 
+import com.github.ucchyocean.lc3.channel.ChannelManager;
+
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Set;
 import java.util.logging.Level;
 
-import com.github.ucchyocean.lc3.channel.ChannelManager;
-
 /**
  * LunaChatのスタンドアロンサーバー
+ *
  * @author ucchy
  */
 public class LunaChatStandalone implements PluginInterface {
@@ -21,7 +22,7 @@ public class LunaChatStandalone implements PluginInterface {
     private LunaChatConfig config;
     private ChannelManager manager;
     private UUIDCacheData uuidCacheData;
-    private File dataFolder;
+    private final File dataFolder;
 
     public LunaChatStandalone(File dataFolder) {
         this.dataFolder = dataFolder;
@@ -60,7 +61,7 @@ public class LunaChatStandalone implements PluginInterface {
 
     @Override
     public LunaChatAPI getLunaChatAPI() {
-        return manager ;
+        return manager;
     }
 
     @Override
@@ -75,8 +76,10 @@ public class LunaChatStandalone implements PluginInterface {
 
     /**
      * オンラインのプレイヤー名一覧を取得する
+     *
      * @return オンラインのプレイヤー名一覧
      */
+    @Override
     public Set<String> getOnlinePlayerNames() {
         return null;
     }
@@ -84,11 +87,12 @@ public class LunaChatStandalone implements PluginInterface {
     @Override
     public void log(Level level, String msg) {
         // 画面に表示する
-        System.out.println(String.format("[%s]%s", level.toString(), msg));
+        System.out.printf("[%s]%s%n", level.toString(), msg);
     }
 
     /**
      * UUIDキャッシュデータを取得する
+     *
      * @return UUIDキャッシュデータ
      * @see com.github.ucchyocean.lc3.PluginInterface#getUUIDCacheData()
      */
@@ -99,6 +103,7 @@ public class LunaChatStandalone implements PluginInterface {
 
     /**
      * 非同期タスクを実行する
+     *
      * @param task タスク
      * @see com.github.ucchyocean.lc3.PluginInterface#runAsyncTask(java.lang.Runnable)
      */

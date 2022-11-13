@@ -9,11 +9,12 @@ import com.github.ucchyocean.lc3.member.ChannelMember;
 
 /**
  * チャンネル削除イベント
+ *
  * @author ucchy
  */
 public class LunaChatBukkitChannelRemoveEvent extends LunaChatBukkitBaseCancellableEvent {
 
-    private ChannelMember member;
+    private final ChannelMember member;
 
     public LunaChatBukkitChannelRemoveEvent(String channelName, ChannelMember member) {
         super(channelName);
@@ -22,6 +23,7 @@ public class LunaChatBukkitChannelRemoveEvent extends LunaChatBukkitBaseCancella
 
     /**
      * チャンネルを削除した人を取得する。
+     *
      * @return チャンネルを削除したChannelMember
      */
     public ChannelMember getMember() {
