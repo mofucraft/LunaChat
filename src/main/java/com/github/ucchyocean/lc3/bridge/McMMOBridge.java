@@ -43,7 +43,7 @@ public class McMMOBridge implements Listener {
         List<Player> recipients = PartyAPI.getOnlineMembers(event.getParty());
 
         String message = event.getMessage();
-        ChannelMember player = ChannelMember.getChannelMember(event.getSender());
+        ChannelMember player = ChannelMember.getChannelMember(event.getAuthor().uuid().toString());
         LunaChatConfig config = LunaChat.getConfig();
         LunaChatAPI api = LunaChat.getAPI();
 
