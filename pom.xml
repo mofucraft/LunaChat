@@ -93,6 +93,10 @@
                                     <pattern>org.jetbrains</pattern>
                                     <shadedPattern>com.github.ucchyocean.lc.lib.org.jetbrains</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>com.github.ucchyocean.lc.lib.org.bstats</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
