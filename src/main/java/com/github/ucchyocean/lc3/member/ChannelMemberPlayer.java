@@ -9,6 +9,7 @@ import com.github.ucchyocean.lc3.LunaChat;
 import com.github.ucchyocean.lc3.LunaChatBukkit;
 import com.github.ucchyocean.lc3.bridge.VaultChatBridge;
 import com.github.ucchyocean.lc3.util.BlockLocation;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -123,7 +124,8 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
     public String getDisplayName() {
         Player player = getPlayer();
         if (player != null) {
-            return player.getDisplayName();
+            String displayName = player.getDisplayName();
+            return LunaChatBukkit.getInstance().enablePlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, displayName) : displayName;
         }
         return getName();
     }
@@ -142,7 +144,8 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
         }
         Player player = getPlayer();
         if (player != null) {
-            return vault.getPlayerPrefix(player);
+            String prefix = vault.getPlayerPrefix(player);
+            return LunaChatBukkit.getInstance().enablePlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, prefix) : prefix;
         }
         return "";
     }
@@ -161,7 +164,8 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
         }
         Player player = getPlayer();
         if (player != null) {
-            return vault.getPlayerSuffix(player);
+            String suffix = vault.getPlayerSuffix(player);
+            return LunaChatBukkit.getInstance().enablePlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, suffix) : suffix;
         }
         return "";
     }
