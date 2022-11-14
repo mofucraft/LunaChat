@@ -353,6 +353,12 @@ public class BukkitEventListener implements Listener {
                 skipJapanize = true;
             }
 
+            // 拡張プレースホルダーを含むなら、Japanize変換は行わない
+            if (LunaChatBukkit.getInstance().enablePlaceholderAPI() &&
+                    PlaceholderAPI.containsPlaceholders(message)) {
+                skipJapanize = true;
+            }
+
             // Japanize変換と、発言処理
             if (!skipJapanize &&
                     LunaChat.getAPI().isPlayerJapanize(player.getName()) &&
@@ -391,15 +397,17 @@ public class BukkitEventListener implements Listener {
                 ClickableFormat format;
                 if (config.isEnableNormalChatMessageFormat()) {
                     String f = config.getNormalChatMessageFormat();
-                    if (LunaChatBukkit.getInstance().getPlaceholderAPI() != null) {
-                        f = PlaceholderAPI.setPlaceholders(event.getPlayer(), f);
-                    }
                     format = ClickableFormat.makeFormat(f, ChannelMember.getChannelMember(event.getPlayer()));
                 } else {
                     String f = event.getFormat()
                             .replace("%1$s", "%displayName")
                             .replace("%2$s", "%msg");
                     format = ClickableFormat.makeFormat(f, ChannelMember.getChannelMember(event.getPlayer()));
+                }
+
+                // 拡張プレースホルダーの置き換え
+                if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+                    message = PlaceholderAPI.setPlaceholders(event.getPlayer(), message);
                 }
 
                 // 発言内容の送信
@@ -426,12 +434,14 @@ public class BukkitEventListener implements Listener {
                 // チャットフォーマット装飾の適用
                 if (config.isEnableNormalChatMessageFormat()) {
                     String f = config.getNormalChatMessageFormat();
-                    if (LunaChatBukkit.getInstance().getPlaceholderAPI() != null) {
-                        f = PlaceholderAPI.setPlaceholders(event.getPlayer(), f);
-                    }
                     f = ClickableFormat.replaceForNormalChatFormat(
                             f, ChannelMember.getChannelMember(event.getPlayer()));
                     event.setFormat(Utility.replaceColorCode(f));
+                }
+
+                // 拡張プレースホルダーの置き換え
+                if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+                    message = PlaceholderAPI.setPlaceholders(event.getPlayer(), message);
                 }
 
                 // 発言内容の設定
@@ -581,6 +591,13 @@ public class BukkitEventListener implements Listener {
      * @return イベントでキャンセルされたかどうか
      */
     private boolean chatToChannelWithEvent(ChannelMember player, Channel channel, String message) {
+
+        // 拡張プレースホルダーを含むなら、Japanizeスキップマーカーを追加する
+        // TODO: 2022/11/15 Bungee共通コードにPlaceholderAPIの処理を置きたくないため暫定的な措置
+        if (LunaChatBukkit.getInstance().enablePlaceholderAPI() &&
+                PlaceholderAPI.containsPlaceholders(message)) {
+            message = LunaChat.getConfig().getNoneJapanizeMarker() + message;
+        }
 
         // LunaChatPreChatEvent イベントコール
         EventResult result = LunaChat.getEventSender().sendLunaChatPreChatEvent(

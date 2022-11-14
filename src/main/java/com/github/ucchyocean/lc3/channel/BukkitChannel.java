@@ -12,6 +12,7 @@ import com.github.ucchyocean.lc3.member.ChannelMember;
 import com.github.ucchyocean.lc3.member.ChannelMemberBukkit;
 import com.github.ucchyocean.lc3.util.ClickableFormat;
 import com.github.ucchyocean.lc3.util.UtilityBukkit;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -54,6 +55,12 @@ public class BukkitChannel extends Channel {
         LunaChatConfig config = LunaChat.getConfig();
 
         String originalMessage = message;
+
+        // 拡張プレースホルダーの置き換え
+        if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+            Player bukkitPlayer = ((ChannelMemberBukkit) player).getPlayer();
+            message = PlaceholderAPI.setPlaceholders(bukkitPlayer, message);
+        }
 
         // 受信者を設定する
         List<ChannelMember> recipients = new ArrayList<ChannelMember>();
