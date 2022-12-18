@@ -52,6 +52,7 @@ public class ChannelPlayerUUID extends ChannelPlayer {
         if (player != null) {
             return new ChannelPlayerUUID(player.getUniqueId());
         }
+        if (name.length() > 16) return null;
         OfflinePlayer offline = Bukkit.getOfflinePlayer(name);
         if (offline != null && offline.getUniqueId() != null) {
             return new ChannelPlayerUUID(offline.getUniqueId());
