@@ -15,9 +15,11 @@ import com.github.ucchyocean.lc3.util.Utility;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Japanize変換を実行して、実行後に発言を行うタスク
@@ -65,7 +67,7 @@ public class JapanizeConvertTask {
     public boolean runSync() {
 
         // 変換対象外のキーワード
-        HashMap<String, String> keywordMap = new HashMap<String, String>();
+        HashMap<String, String> keywordMap = new LinkedHashMap<>();
         ArrayList<String> keywords = new ArrayList<String>();
         if (LunaChat.getConfig().isJapanizeIgnorePlayerName()) {
             keywords.addAll(LunaChat.getPlugin().getOnlinePlayerNames());
@@ -87,7 +89,9 @@ public class JapanizeConvertTask {
                 keywordMap.put(key, keyword);
             }
         }
-        for (String dickey : dictionary.keySet()) {
+        for (String dickey : dictionary.entrySet().stream()
+                .sorted((e1, e2) -> e2.getKey().length() - e1.getKey().length())
+                .collect(Collectors.toMap(k -> k.getKey(), v -> v.getValue(), (v1, v2) -> v1, LinkedHashMap::new)).keySet()) {
             if (keywordLocked.contains(dickey)) {
                 index++;
                 String key = "＜" + makeMultibytesDigit(index) + "＞";

@@ -6,7 +6,9 @@
 package com.github.ucchyocean.lc3.japanize;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * ローマ字表記を漢字変換して返すユーティリティ
@@ -37,10 +39,12 @@ public class Japanizer {
         String deletedURL = org.replaceAll(REGEX_URL, " ");
 
         // キーワードをロック
-        HashMap<String, String> keywordMap = new HashMap<String, String>();
+        HashMap<String, String> keywordMap = new LinkedHashMap<>();
         int index = 0;
         String keywordLocked = deletedURL;
-        for (String dickey : dictionary.keySet()) {
+        for (String dickey : dictionary.entrySet().stream()
+                .sorted((e1, e2) -> e2.getKey().length() - e1.getKey().length())
+                .collect(Collectors.toMap(k -> k.getKey(), v -> v.getValue(), (v1, v2) -> v1, LinkedHashMap::new)).keySet()) {
             if (keywordLocked.contains(dickey)) {
                 index++;
                 String key = "＜" + makeMultibytesDigit(index) + "＞";
