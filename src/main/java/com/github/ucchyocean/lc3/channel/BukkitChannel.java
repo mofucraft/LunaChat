@@ -57,7 +57,7 @@ public class BukkitChannel extends Channel {
         String originalMessage = message;
 
         // 拡張プレースホルダーの置き換え
-        if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+        if (LunaChatBukkit.getInstance().enablePlaceholderAPI() && player instanceof ChannelMemberBukkit) {
             Player bukkitPlayer = ((ChannelMemberBukkit) player).getPlayer();
             message = PlaceholderAPI.setPlaceholders(bukkitPlayer, message);
         }
