@@ -1,7 +1,7 @@
 LunaChat (Forked by MofuCraft)
 ========
 
-[![Java CI with Maven](https://github.com/mofucraft/LunaChat/actions/workflows/maven.yml/badge.svg)](https://github.com/mofucraft/LunaChat/actions/workflows/maven.yml)
+[![Java CI with Gradle](https://github.com/mofucraft/LunaChat/actions/workflows/gradle.yml/badge.svg)](https://github.com/mofucraft/LunaChat/actions/workflows/gradle.yml)
 
 このリポジトリには幾つかの変更が追加されています。
 
@@ -12,7 +12,8 @@ LunaChat (Forked by MofuCraft)
 
 ---
 
-Build Status : [![Build Status](https://travis-ci.org/ucchyocean/LunaChat.svg?branch=master)](https://travis-ci.org/ucchyocean/LunaChat)
+Build
+Status : [![Build Status](https://travis-ci.org/ucchyocean/LunaChat.svg?branch=master)](https://travis-ci.org/ucchyocean/LunaChat)
 
 チャンネルチャットプラグイン<br />
 <br />
