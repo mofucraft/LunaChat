@@ -1,8 +1,8 @@
-name: ${project.name}
+name: ${name}
 main: com.github.ucchyocean.lc3.LunaChatBukkit
-version: ${project.version}
+version: ${version}
 authors: [ ucchy, YukiLeafX, LazyGon, tomo1560 ]
-description: ${project.description}
+description: ${description}
 softdepend: [ Vault, dynmap, Multiverse-Core, mcMMO, PlaceholderAPI ]
 
 commands:
