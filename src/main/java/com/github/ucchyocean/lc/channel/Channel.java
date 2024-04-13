@@ -93,7 +93,7 @@ public class Channel {
      * @deprecated Legacy Version
      */
     public void chat(ChannelPlayer player, String message) {
-        channel.chat(ChannelMember.getChannelMember(player.getPlayer()), message);
+        channel.chat(ChannelMember.getChannelMember(player.toString()), message);
     }
 
     /**
