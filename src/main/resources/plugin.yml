@@ -3,6 +3,7 @@ main: com.github.ucchyocean.lc3.LunaChatBukkit
 version: ${version}
 authors: [ ucchy, YukiLeafX, LazyGon, tomo1560 ]
 description: ${description}
+api-version: 1.16
 softdepend: [ Vault, dynmap, Multiverse-Core, mcMMO, PlaceholderAPI ]
 
 commands:

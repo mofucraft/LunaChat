@@ -32,8 +32,18 @@ repositories {
     maven {
         url = 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
+    // BungeeCord/brigadier のスナップショットは md-5 リポジトリにある場合がある
+    maven {
+        name = 'md5Snapshots'
+        url = uri('https://repo.md-5.net/content/repositories/snapshots/')
+    }
     maven {
         url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+    // PlaceholderAPI (new official repo)
+    maven {
+        name = 'helpchatRepoReleases'
+        url = uri('https://repo.helpch.at/releases/')
     }
     maven {
         url = 'https://repo.maven.apache.org/maven2/'
@@ -55,17 +65,34 @@ dependencies {
     compileOnly 'net.md-5:bungeecord-chat:1.16-R0.3'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'org.dynmap:dynmap-api:2.0'
-    compileOnly 'com.onarandombox.multiversecore:Multiverse-Core:4.1.0'
+    // Multiverse-Core は v4/v5 ともにリフレクションで対応するため、依存は追加しない
     compileOnly 'com.gmail.nossr50.mcMMO:mcMMO:2.1.154'
     compileOnly 'net.alpenblock:BungeePerms:4.0-dev-114'
     compileOnly 'net.luckperms:api:5.4'
-    compileOnly 'me.clip:placeholderapi:2.11.2'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
 }
 
 group = 'com.github.ucchyocean'
 version = '3.1.7'
 description = 'A powerfull chat channel plugin with IME (Kana-Kanji conversion) support'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+
+// Java Toolchain を指定（JDKが見つからない環境向け）
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+// 依存解決の調整: 古い BungeeCord API が参照する net.md-5:brigadier スナップショットが
+// 取得できない環境があるため、Mojang 公式 brigadier に置換する
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'net.md-5' && details.requested.name == 'brigadier') {
+            details.useTarget 'com.mojang:brigadier:1.0.18'
+            details.because 'md-5 brigadier snapshot not available; use Mojang brigadier'
+        }
+    }
+}
 
 shadowJar {
     archiveFileName.set(project.name + "." + archiveExtension.get())
@@ -75,6 +102,10 @@ shadowJar {
     relocate 'org.jetbrains', 'com.github.ucchyocean.lc.lib.org.jetbrains'
     relocate 'org.bstats', 'com.github.ucchyocean.lc.lib.org.bstats'
 }
+
+// デフォルトの build/assemble でもシェード済みJarを作る
+tasks.named('assemble') { dependsOn shadowJar }
+tasks.named('build') { dependsOn shadowJar }
 
 publishing {
     publications {
