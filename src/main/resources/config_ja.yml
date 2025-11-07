@@ -156,6 +156,8 @@ ngwordAction: mask
 # スパム保護機能を有効にするかどうか。
 # 有効にすると、連続した類似メッセージが検出されてブロックされます。
 # この機能はAntiSpamプラグイン（https://github.com/mofucraft/AntiSpam）から統合されています。
+#
+# 「mofucraft.staff.antispam_off」パーミッションを持つプレイヤーはスパム検出をバイパスできます。
 enableSpamProtection: false
 
 # スパム検出の類似度閾値（0.0-1.0）。

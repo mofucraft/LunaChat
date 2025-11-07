@@ -282,8 +282,8 @@ public abstract class Channel {
             return;
         }
 
-        // スパム検出チェック（設定で有効になっている場合のみ）
-        if (config.isEnableSpamProtection()) {
+        // スパム検出チェック（設定で有効になっている場合、かつバイパスパーミッションを持っていない場合のみ）
+        if (config.isEnableSpamProtection() && !player.hasPermission("mofucraft.staff.antispam_off")) {
             com.github.ucchyocean.lc3.util.SpamDetector.SpamCheckResult spamResult =
                     com.github.ucchyocean.lc3.util.SpamDetector.checkSpam(
                             player.getName(),

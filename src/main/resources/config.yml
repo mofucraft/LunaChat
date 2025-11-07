@@ -153,6 +153,8 @@ ngwordAction: mask
 # Whether to enable spam protection.
 # When enabled, consecutive similar messages will be detected and blocked.
 # This feature is integrated from AntiSpam plugin (https://github.com/mofucraft/AntiSpam)
+#
+# Players with the permission "mofucraft.staff.antispam_off" will bypass spam detection.
 enableSpamProtection: false
 
 # Similarity threshold for spam detection (0.0-1.0).
