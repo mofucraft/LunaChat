@@ -161,6 +161,27 @@ public class LunaChatConfig {
     private List<Pattern> ngwordCompiled;
 
     /**
+     * スパム保護機能を有効にするかどうか
+     */
+    private boolean enableSpamProtection;
+
+    /**
+     * スパム判定の類似度閾値（0.0-1.0）
+     */
+    private double spamSimilarityThreshold;
+
+    /**
+     * スパム判定にJaro-Winkler距離を使用するかどうか<br/>
+     * falseの場合はLevenshtein距離を使用
+     */
+    private boolean spamUseJaroWinkler;
+
+    /**
+     * スパム判定から挨拶メッセージを除外するかどうか
+     */
+    private boolean spamExcludeGreetings;
+
+    /**
      * 通常チャット（非チャンネルチャット）の装飾を、LunaChatから行うかどうか
      */
     private boolean enableNormalChatMessageFormat;
@@ -328,6 +349,11 @@ public class LunaChatConfig {
         for (String word : ngword) {
             ngwordCompiled.add(Pattern.compile(word));
         }
+
+        enableSpamProtection = config.getBoolean("enableSpamProtection", false);
+        spamSimilarityThreshold = config.getDouble("spamSimilarityThreshold", 0.8);
+        spamUseJaroWinkler = config.getBoolean("spamUseJaroWinkler", true);
+        spamExcludeGreetings = config.getBoolean("spamExcludeGreetings", true);
 
         enableNormalChatMessageFormat =
                 config.getBoolean("enableNormalChatMessageFormat", true);
@@ -576,6 +602,42 @@ public class LunaChatConfig {
      */
     public List<Pattern> getNgwordCompiled() {
         return ngwordCompiled;
+    }
+
+    /**
+     * スパム保護機能を有効にするかどうか
+     *
+     * @return enableSpamProtectionを返す
+     */
+    public boolean isEnableSpamProtection() {
+        return enableSpamProtection;
+    }
+
+    /**
+     * スパム判定の類似度閾値（0.0-1.0）
+     *
+     * @return spamSimilarityThresholdを返す
+     */
+    public double getSpamSimilarityThreshold() {
+        return spamSimilarityThreshold;
+    }
+
+    /**
+     * スパム判定にJaro-Winkler距離を使用するかどうか
+     *
+     * @return spamUseJaroWinklerを返す
+     */
+    public boolean isSpamUseJaroWinkler() {
+        return spamUseJaroWinkler;
+    }
+
+    /**
+     * スパム判定から挨拶メッセージを除外するかどうか
+     *
+     * @return spamExcludeGreetingsを返す
+     */
+    public boolean isSpamExcludeGreetings() {
+        return spamExcludeGreetings;
     }
 
     /**

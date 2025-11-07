@@ -1226,6 +1226,26 @@ public class Messages {
     }
 
     /**
+     * 似た文は連続で送れません！
+     */
+    public static String errmsgSpamFirstWarning() {
+        String msg = resources.getString("errmsgSpamFirstWarning");
+        if (msg == null) return "";
+        KeywordReplacer kr = new KeywordReplacer(msg);
+        return Utility.replaceColorCode(resources.getString("errorPrefix", "") + kr);
+    }
+
+    /**
+     * スパム検出のため、メッセージがブロックされました！
+     */
+    public static String errmsgSpamBlocked() {
+        String msg = resources.getString("errmsgSpamBlocked");
+        if (msg == null) return "";
+        KeywordReplacer kr = new KeywordReplacer(msg);
+        return Utility.replaceColorCode(resources.getString("errorPrefix", "") + kr);
+    }
+
+    /**
      * 指定されたプレイヤーは既にBANリストに含まれています。
      */
     public static String errmsgAlreadyBanned() {

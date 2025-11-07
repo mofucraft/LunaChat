@@ -48,6 +48,7 @@ dependencies {
     implementation 'org.bstats:bstats-bungeecord:3.0.0'
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.apache.commons:commons-text:1.10.0'
     implementation 'org.jetbrains:annotations:23.0.0'
     testImplementation 'junit:junit:4.13.2'
     compileOnly 'org.spigotmc:spigot-api:1.16.2-R0.1-SNAPSHOT'
@@ -72,6 +73,7 @@ shadowJar {
 
     relocate 'com.google.gson', 'com.github.ucchyocean.lc.lib.com.google.gson'
     relocate 'org.apache.commons.lang3', 'com.github.ucchyocean.lc.lib.org.apache.commons.lang3'
+    relocate 'org.apache.commons.text', 'com.github.ucchyocean.lc.lib.org.apache.commons.text'
     relocate 'org.jetbrains', 'com.github.ucchyocean.lc.lib.org.jetbrains'
     relocate 'org.bstats', 'com.github.ucchyocean.lc.lib.org.bstats'
 }

@@ -148,6 +148,29 @@ ngword: []
 ngwordAction: mask
 
 
+# -------------------- Spam protection setting --------------------
+
+# Whether to enable spam protection.
+# When enabled, consecutive similar messages will be detected and blocked.
+# This feature is integrated from AntiSpam plugin (https://github.com/mofucraft/AntiSpam)
+enableSpamProtection: false
+
+# Similarity threshold for spam detection (0.0-1.0).
+# Messages with similarity above this threshold will be considered spam.
+# Default is 0.8 (80% similarity).
+spamSimilarityThreshold: 0.8
+
+# Whether to use Jaro-Winkler distance for spam detection.
+# If false, Levenshtein distance will be used instead.
+# Jaro-Winkler is generally more suitable for short text comparison.
+spamUseJaroWinkler: true
+
+# Whether to exclude greeting messages from spam detection.
+# Greeting messages are short messages (15 characters or less) containing
+# keywords like "hi", "hello", "こん", "よろ", "おは", etc.
+spamExcludeGreetings: true
+
+
 # -------------------- Normal chat settings --------------------
 
 # Whether to decorate normal chat (non-channel chat) from LunaChat.

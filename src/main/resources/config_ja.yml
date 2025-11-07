@@ -138,7 +138,7 @@ dynmapChannel: ''
 
 # NGワード設定。正規表現が指定可能です。
 # ここに設定されたワードを発言したプレイヤーは、NGワード部分がマスクされます。
-ngword: 
+ngword:
 - 'ちん(こ|ぽ|ちん)'
 
 # NGワード発言時の動作設定。mask、mute、kick、ban の4つのいずれかが設定可能。
@@ -150,6 +150,28 @@ ngword:
 #    kickやbanを設定しても、マスクのみが実行されます。
 ngwordAction: mask
 
+
+# -------------------- スパム保護設定 --------------------
+
+# スパム保護機能を有効にするかどうか。
+# 有効にすると、連続した類似メッセージが検出されてブロックされます。
+# この機能はAntiSpamプラグイン（https://github.com/mofucraft/AntiSpam）から統合されています。
+enableSpamProtection: false
+
+# スパム検出の類似度閾値（0.0-1.0）。
+# この閾値を超える類似度のメッセージはスパムと判定されます。
+# デフォルトは0.8（80%の類似度）です。
+spamSimilarityThreshold: 0.8
+
+# スパム検出にJaro-Winkler距離を使用するかどうか。
+# falseの場合はLevenshtein距離が使用されます。
+# Jaro-Winklerは一般的に短いテキストの比較に適しています。
+spamUseJaroWinkler: true
+
+# スパム検出から挨拶メッセージを除外するかどうか。
+# 挨拶メッセージとは、15文字以内で「hi」「hello」「こん」「よろ」「おは」などの
+# キーワードを含む短いメッセージです。
+spamExcludeGreetings: true
 
 
 # -------------------- 通常チャット設定 --------------------

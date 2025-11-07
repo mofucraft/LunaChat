@@ -282,6 +282,30 @@ public abstract class Channel {
             return;
         }
 
+        // スパム検出チェック（設定で有効になっている場合のみ）
+        if (config.isEnableSpamProtection()) {
+            com.github.ucchyocean.lc3.util.SpamDetector.SpamCheckResult spamResult =
+                    com.github.ucchyocean.lc3.util.SpamDetector.checkSpam(
+                            player.getName(),
+                            message,
+                            config.getSpamSimilarityThreshold(),
+                            config.isSpamUseJaroWinkler(),
+                            config.isSpamExcludeGreetings()
+                    );
+
+            if (spamResult.isSpam()) {
+                if (spamResult.isRepeatOffender()) {
+                    // 繰り返し違反者の場合、メッセージをブロック
+                    player.sendMessage(Messages.errmsgSpamBlocked());
+                    return;
+                } else {
+                    // 初回警告
+                    player.sendMessage(Messages.errmsgSpamFirstWarning());
+                    // 警告のみで、メッセージは送信する
+                }
+            }
+        }
+
         String maskedMessage = message;
 
         // 一時的にJapanizeスキップ設定かどうかを確認する
