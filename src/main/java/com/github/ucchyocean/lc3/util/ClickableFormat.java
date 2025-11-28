@@ -7,10 +7,15 @@ package com.github.ucchyocean.lc3.util;
 
 import com.github.ucchyocean.lc3.LunaChat;
 import com.github.ucchyocean.lc3.LunaChatAPI;
+import com.github.ucchyocean.lc3.LunaChatBukkit;
+import com.github.ucchyocean.lc3.LunaChatMode;
 import com.github.ucchyocean.lc3.Messages;
 import com.github.ucchyocean.lc3.channel.Channel;
 import com.github.ucchyocean.lc3.member.ChannelMember;
+import com.github.ucchyocean.lc3.member.ChannelMemberBukkit;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.*;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.SimpleDateFormat;
@@ -142,6 +147,24 @@ public class ClickableFormat {
 
             msg.replace("%world", member.getWorldName());
             msg.replace("%server", member.getServerName());
+        }
+
+        // LunaChatの独自キーワード置換後、PlaceholderAPIのプレースホルダーを置換
+        // これにより、フォーマット内に直接記述されたPlaceholderAPIのプレースホルダーが正しく展開される
+        if (LunaChat.getMode() == LunaChatMode.BUKKIT && 
+            member instanceof ChannelMemberBukkit) {
+            try {
+                if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+                    Player bukkitPlayer = ((ChannelMemberBukkit) member).getPlayer();
+                    if (bukkitPlayer != null) {
+                        String result = msg.toString();
+                        result = PlaceholderAPI.setPlaceholders(bukkitPlayer, result);
+                        msg = new KeywordReplacer(result);
+                    }
+                }
+            } catch (NoClassDefFoundError e) {
+                // PlaceholderAPIが利用できない場合はスキップ
+            }
         }
 
         return new ClickableFormat(msg);

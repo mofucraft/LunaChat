@@ -18,7 +18,10 @@ repositories {
         url = 'https://repo.mikeprimm.com/'
     }
     maven {
-        url = 'https://repo.onarandombox.com/content/repositories/multiverse/'
+        url = 'https://repo.onarandombox.com/content/groups/public/'
+    }
+    maven {
+        url = 'https://repo.papermc.io/repository/maven-public/'
     }
     maven {
         url = 'https://repo.codemc.org/repository/maven-public/'
@@ -59,7 +62,7 @@ dependencies {
     compileOnly 'com.gmail.nossr50.mcMMO:mcMMO:2.1.154'
     compileOnly 'net.alpenblock:BungeePerms:4.0-dev-114'
     compileOnly 'net.luckperms:api:5.4'
-    compileOnly 'me.clip:placeholderapi:2.11.2'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
 }
 
 group = 'com.github.ucchyocean'
