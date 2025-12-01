@@ -57,9 +57,15 @@ public class BukkitChannel extends Channel {
         String originalMessage = message;
 
         // 拡張プレースホルダーの置き換え
-        if (LunaChatBukkit.getInstance().enablePlaceholderAPI() && player instanceof ChannelMemberBukkit) {
-            Player bukkitPlayer = ((ChannelMemberBukkit) player).getPlayer();
-            message = PlaceholderAPI.setPlaceholders(bukkitPlayer, message);
+        if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+            if (player instanceof ChannelMemberBukkit) {
+                // プレイヤーの場合：PlaceholderAPI で展開
+                Player bukkitPlayer = ((ChannelMemberBukkit) player).getPlayer();
+                message = PlaceholderAPI.setPlaceholders(bukkitPlayer, message);
+            } else {
+                // Bot / Console の場合：%mofucommunity_prefix% を空文字に置換
+                message = message.replace("%mofucommunity_prefix%", "");
+            }
         }
 
         // 受信者を設定する

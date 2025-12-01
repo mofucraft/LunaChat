@@ -151,14 +151,21 @@ public class ClickableFormat {
 
         // LunaChatの独自キーワード置換後、PlaceholderAPIのプレースホルダーを置換
         // これにより、フォーマット内に直接記述されたPlaceholderAPIのプレースホルダーが正しく展開される
-        if (LunaChat.getMode() == LunaChatMode.BUKKIT && 
-            member instanceof ChannelMemberBukkit) {
+        if (LunaChat.getMode() == LunaChatMode.BUKKIT) {
             try {
                 if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
-                    Player bukkitPlayer = ((ChannelMemberBukkit) member).getPlayer();
-                    if (bukkitPlayer != null) {
+                    if (member instanceof ChannelMemberBukkit) {
+                        // プレイヤーの場合：PlaceholderAPI で展開
+                        Player bukkitPlayer = ((ChannelMemberBukkit) member).getPlayer();
+                        if (bukkitPlayer != null) {
+                            String result = msg.toString();
+                            result = PlaceholderAPI.setPlaceholders(bukkitPlayer, result);
+                            msg = new KeywordReplacer(result);
+                        }
+                    } else {
+                        // Bot / Console の場合：%mofucommunity_prefix% を空文字に置換
                         String result = msg.toString();
-                        result = PlaceholderAPI.setPlaceholders(bukkitPlayer, result);
+                        result = result.replace("%mofucommunity_prefix%", "");
                         msg = new KeywordReplacer(result);
                     }
                 }
