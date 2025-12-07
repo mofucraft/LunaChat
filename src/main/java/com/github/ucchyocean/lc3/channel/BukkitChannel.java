@@ -13,7 +13,7 @@ import com.github.ucchyocean.lc3.member.ChannelMemberBukkit;
 import com.github.ucchyocean.lc3.util.ClickableFormat;
 import com.github.ucchyocean.lc3.util.UtilityBukkit;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -177,9 +177,10 @@ public class BukkitChannel extends Channel {
         // 送信する
         if (format != null) {
             format.replace("%msg", message);
-            BaseComponent[] comps = format.makeTextComponent();
+            // Adventure API版のComponentを使用（shadow等の装飾を保持）
+            Component adventureComponent = format.makeAdventureComponent();
             for (ChannelMember p : recipients) {
-                p.sendMessage(comps);
+                p.sendMessage(adventureComponent);
             }
             message = format.toLegacyText();
         } else {

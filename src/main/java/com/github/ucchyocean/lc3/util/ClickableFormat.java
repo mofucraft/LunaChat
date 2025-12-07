@@ -317,8 +317,9 @@ public class ClickableFormat {
 
         while (matcher.find()) {
             // マッチする箇所までの文字列を追加
+            String beforeText = "";
             if (lastIndex < matcher.start()) {
-                String beforeText = text.substring(lastIndex, matcher.start());
+                beforeText = text.substring(lastIndex, matcher.start());
                 builder.append(LegacyComponentSerializer.legacySection().deserialize(beforeText));
             }
 
@@ -333,7 +334,16 @@ public class ClickableFormat {
             Component clickableComponent;
             if (member != null && displayText.equals(member.getDisplayName())) {
                 // memberのdisplayNameComponent（shadow付き）を使用
-                clickableComponent = member.getDisplayNameComponent();
+                Component displayNameComp = member.getDisplayNameComponent();
+
+                // 直前のテキストから最後の色コードを抽出してdisplayNameに適用
+                net.kyori.adventure.text.format.TextColor prefixColor = extractLastColor(text.substring(0, matcher.start()));
+                if (prefixColor != null) {
+                    // prefixの色を適用しつつ、shadow等の装飾は保持
+                    displayNameComp = applyColorToComponent(displayNameComp, prefixColor);
+                }
+
+                clickableComponent = displayNameComp;
             } else {
                 // 通常のテキスト
                 clickableComponent = LegacyComponentSerializer.legacySection().deserialize(displayText);
@@ -363,5 +373,86 @@ public class ClickableFormat {
         }
 
         return builder.build();
+    }
+
+    /**
+     * 文字列から最後の色コードを抽出する
+     *
+     * @param text 対象文字列
+     * @return 最後の色コード、見つからない場合はnull
+     */
+    private net.kyori.adventure.text.format.TextColor extractLastColor(String text) {
+        if (text == null || text.isEmpty()) return null;
+
+        // §x§R§R§G§G§B§B 形式（RGB）を検索
+        Pattern rgbPattern = Pattern.compile("§x§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])");
+        Matcher rgbMatcher = rgbPattern.matcher(text);
+        String lastRgb = null;
+        while (rgbMatcher.find()) {
+            lastRgb = rgbMatcher.group(1) + rgbMatcher.group(2) +
+                      rgbMatcher.group(3) + rgbMatcher.group(4) +
+                      rgbMatcher.group(5) + rgbMatcher.group(6);
+        }
+        if (lastRgb != null) {
+            return net.kyori.adventure.text.format.TextColor.fromHexString("#" + lastRgb);
+        }
+
+        // §[0-9a-f] 形式（標準色）を検索
+        Pattern standardPattern = Pattern.compile("§([0-9a-fA-F])");
+        Matcher standardMatcher = standardPattern.matcher(text);
+        Character lastColor = null;
+        while (standardMatcher.find()) {
+            lastColor = standardMatcher.group(1).charAt(0);
+        }
+        if (lastColor != null) {
+            return getColorFromCode(lastColor);
+        }
+
+        return null;
+    }
+
+    /**
+     * 標準色コードからTextColorを取得
+     */
+    private net.kyori.adventure.text.format.TextColor getColorFromCode(char code) {
+        return switch (Character.toLowerCase(code)) {
+            case '0' -> net.kyori.adventure.text.format.NamedTextColor.BLACK;
+            case '1' -> net.kyori.adventure.text.format.NamedTextColor.DARK_BLUE;
+            case '2' -> net.kyori.adventure.text.format.NamedTextColor.DARK_GREEN;
+            case '3' -> net.kyori.adventure.text.format.NamedTextColor.DARK_AQUA;
+            case '4' -> net.kyori.adventure.text.format.NamedTextColor.DARK_RED;
+            case '5' -> net.kyori.adventure.text.format.NamedTextColor.DARK_PURPLE;
+            case '6' -> net.kyori.adventure.text.format.NamedTextColor.GOLD;
+            case '7' -> net.kyori.adventure.text.format.NamedTextColor.GRAY;
+            case '8' -> net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+            case '9' -> net.kyori.adventure.text.format.NamedTextColor.BLUE;
+            case 'a' -> net.kyori.adventure.text.format.NamedTextColor.GREEN;
+            case 'b' -> net.kyori.adventure.text.format.NamedTextColor.AQUA;
+            case 'c' -> net.kyori.adventure.text.format.NamedTextColor.RED;
+            case 'd' -> net.kyori.adventure.text.format.NamedTextColor.LIGHT_PURPLE;
+            case 'e' -> net.kyori.adventure.text.format.NamedTextColor.YELLOW;
+            case 'f' -> net.kyori.adventure.text.format.NamedTextColor.WHITE;
+            default -> null;
+        };
+    }
+
+    /**
+     * Componentに色を適用する（shadowなどの装飾は保持）
+     */
+    private Component applyColorToComponent(Component component, net.kyori.adventure.text.format.TextColor color) {
+        if (component instanceof net.kyori.adventure.text.TextComponent textComp) {
+            // 現在のスタイルを取得し、色だけ変更
+            net.kyori.adventure.text.format.Style currentStyle = textComp.style();
+            net.kyori.adventure.text.format.Style newStyle = currentStyle.color(color);
+
+            // 子コンポーネントも再帰的に処理
+            java.util.List<Component> newChildren = new java.util.ArrayList<>();
+            for (Component child : textComp.children()) {
+                newChildren.add(applyColorToComponent(child, color));
+            }
+
+            return textComp.style(newStyle).children(newChildren);
+        }
+        return component.color(color);
     }
 }
