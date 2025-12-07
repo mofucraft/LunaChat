@@ -94,16 +94,26 @@ public class Utility {
     }
 
     /**
-     * Webカラーコード（#99AABBなど）を、カラーコードに置き換えする
+     * Webカラーコード（#99AABBや&#99AABBなど）を、カラーコードに置き換えする
      *
      * @param source 置き換え元の文字列
      * @return 置き換え後の文字列
      */
     private static String replaceWebColorCode(String source) {
         return source
+                // &#RRGGBB 形式（&プレフィックス付き6桁）
+                .replaceAll(
+                        "&#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])",
+                        "\u00A7x\u00A7$1\u00A7$2\u00A7$3\u00A7$4\u00A7$5\u00A7$6")
+                // &#RGB 形式（&プレフィックス付き3桁）
+                .replaceAll(
+                        "&#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])",
+                        "\u00A7x\u00A7$1\u00A7$1\u00A7$2\u00A7$2\u00A7$3\u00A7$3")
+                // #RRGGBB 形式（6桁）
                 .replaceAll(
                         "#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])",
                         "\u00A7x\u00A7$1\u00A7$2\u00A7$3\u00A7$4\u00A7$5\u00A7$6")
+                // #RGB 形式（3桁）
                 .replaceAll(
                         "#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])",
                         "\u00A7x\u00A7$1\u00A7$1\u00A7$2\u00A7$2\u00A7$3\u00A7$3");
@@ -121,13 +131,14 @@ public class Utility {
     }
 
     /**
-     * 文字列に含まれているカラーコード候補（&aや#99AABB）を除去して返す
+     * 文字列に含まれているカラーコード候補（&aや#99AABBや&#99AABB）を除去して返す
      *
      * @param source 置き換え元の文字列
      * @return 置き換え後の文字列
      */
     public static String stripAltColorCode(String source) {
         if (source == null) return null;
+        source = source.replaceAll("&#[0-9a-fA-F]{6}", "").replaceAll("&#[0-9a-fA-F]{3}", "");
         source = source.replaceAll("#[0-9a-fA-F]{6}", "").replaceAll("#[0-9a-fA-F]{3}", "");
         return source.replaceAll("&([0-9a-fk-orxA-FK-ORX])", "");
     }
@@ -144,14 +155,14 @@ public class Utility {
     }
 
     /**
-     * カラーコード候補（&aや#99AABB）かどうかを判断する
+     * カラーコード候補（&aや#99AABBや&#99AABB）かどうかを判断する
      *
      * @param color カラーコード候補
      * @return カラーコード候補かどうか
      */
     public static boolean isAltColorCode(String code) {
         if (code == null) return false;
-        return code.matches("(&[0-9a-fk-orA-FK-OR]|#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6})");
+        return code.matches("(&[0-9a-fk-orA-FK-OR]|#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6}|&#[0-9a-fA-F]{3}|&#[0-9a-fA-F]{6})");
     }
 
     /**
