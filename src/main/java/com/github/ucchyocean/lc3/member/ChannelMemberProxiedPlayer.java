@@ -9,6 +9,7 @@ import com.github.ucchyocean.lc3.LunaChat;
 import com.github.ucchyocean.lc3.LunaChatBungee;
 import com.github.ucchyocean.lc3.bridge.BungeePermsBridge;
 import com.github.ucchyocean.lc3.bridge.LuckPermsBridge;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -172,6 +173,34 @@ public class ChannelMemberProxiedPlayer extends ChannelMemberBungee {
         if (player != null) {
             player.sendMessage(message);
         }
+    }
+
+    /**
+     * メッセージを送る（Adventure API）
+     * BungeeCordはAdventure APIに非対応のため、Legacy形式に変換して送信
+     *
+     * @param message 送るメッセージ
+     */
+    @Override
+    public void sendMessage(Component message) {
+        if (message == null) return;
+        ProxiedPlayer player = getPlayer();
+        if (player != null) {
+            // BungeeCordはAdventure非対応なので、プレーンテキストで送信
+            String text = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(message);
+            player.sendMessage(TextComponent.fromLegacyText(text));
+        }
+    }
+
+    /**
+     * プレイヤー表示名をComponentで返す（Adventure API）
+     * BungeeCordはAdventure APIに非対応のため、テキストのみ
+     *
+     * @return プレイヤー表示名のComponent
+     */
+    @Override
+    public Component getDisplayNameComponent() {
+        return Component.text(getDisplayName());
     }
 
     /**

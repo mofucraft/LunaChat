@@ -68,19 +68,23 @@ public class LunaChatBukkit extends JavaPlugin implements PluginInterface {
         LunaChat.setPlugin(this);
         LunaChat.setMode(LunaChatMode.BUKKIT);
 
-        // Metrics
-        Metrics metrics = new Metrics(this, 7936);
-        metrics.addCustomChart(new DrilldownPie(
-                "minecraft_server_version", new Callable<Map<String, Map<String, Integer>>>() {
-            @Override
-            public Map<String, Map<String, Integer>> call() throws Exception {
-                Map<String, Map<String, Integer>> map = new HashMap<>();
-                Map<String, Integer> sub = new HashMap<>();
-                sub.put(Bukkit.getVersion(), 1);
-                map.put(Bukkit.getName(), sub);
-                return map;
-            }
-        }));
+        // Metrics (リロケーションが失敗した場合はスキップ)
+        try {
+            Metrics metrics = new Metrics(this, 7936);
+            metrics.addCustomChart(new DrilldownPie(
+                    "minecraft_server_version", new Callable<Map<String, Map<String, Integer>>>() {
+                @Override
+                public Map<String, Map<String, Integer>> call() throws Exception {
+                    Map<String, Map<String, Integer>> map = new HashMap<>();
+                    Map<String, Integer> sub = new HashMap<>();
+                    sub.put(Bukkit.getVersion(), 1);
+                    map.put(Bukkit.getName(), sub);
+                    return map;
+                }
+            }));
+        } catch (Exception e) {
+            getLogger().warning("bStats metrics could not be initialized: " + e.getMessage());
+        }
 
         // 変数などの初期化
         config = new LunaChatConfig(getDataFolder(), getFile());
@@ -239,6 +243,18 @@ public class LunaChatBukkit extends JavaPlugin implements PluginInterface {
 
     public boolean enablePlaceholderAPI() {
         return Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+    }
+
+    /**
+     * 取得できなかったPlaceholderAPIのプレースホルダーを空文字に置換する
+     *
+     * @param text 処理対象の文字列
+     * @return 未解決のプレースホルダーを空文字に置換した文字列
+     */
+    public static String stripUnresolvedPlaceholders(String text) {
+        if (text == null) return null;
+        // PlaceholderAPIの未解決プレースホルダー（%xxx%形式）を空文字に置換
+        return text.replaceAll("%[^%]+%", "");
     }
 
     /**

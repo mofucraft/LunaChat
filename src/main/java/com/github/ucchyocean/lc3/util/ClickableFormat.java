@@ -14,7 +14,13 @@ import com.github.ucchyocean.lc3.channel.Channel;
 import com.github.ucchyocean.lc3.member.ChannelMember;
 import com.github.ucchyocean.lc3.member.ChannelMemberBukkit;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.md_5.bungee.api.chat.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,11 +48,19 @@ public class ClickableFormat {
             "＜type=SUGGEST_COMMAND text=\"%s\" hover=\"%s\" command=\"%s\"＞";
     private static final String PLACEHOLDER_PATTERN =
             "＜type=(SUGGEST_COMMAND|RUN_COMMAND) text=\"([^\"]*)\" hover=\"([^\"]*)\" command=\"([^\"]*)\"＞";
+    // Adventure API用のプレースホルダー（displayNameComponentを後から埋め込むため）
+    private static final String DISPLAY_NAME_COMPONENT_PLACEHOLDER = "＜DISPLAY_NAME_COMPONENT＞";
 
     private final KeywordReplacer message;
+    private ChannelMember member;
 
     private ClickableFormat(KeywordReplacer message) {
         this.message = message;
+    }
+
+    private ClickableFormat(KeywordReplacer message, ChannelMember member) {
+        this.message = message;
+        this.member = member;
     }
 
     /**
@@ -154,27 +168,24 @@ public class ClickableFormat {
         if (LunaChat.getMode() == LunaChatMode.BUKKIT) {
             try {
                 if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+                    String result = msg.toString();
                     if (member instanceof ChannelMemberBukkit) {
                         // プレイヤーの場合：PlaceholderAPI で展開
                         Player bukkitPlayer = ((ChannelMemberBukkit) member).getPlayer();
                         if (bukkitPlayer != null) {
-                            String result = msg.toString();
                             result = PlaceholderAPI.setPlaceholders(bukkitPlayer, result);
-                            msg = new KeywordReplacer(result);
                         }
-                    } else {
-                        // Bot / Console の場合：%mofucommunity_prefix% を空文字に置換
-                        String result = msg.toString();
-                        result = result.replace("%mofucommunity_prefix%", "");
-                        msg = new KeywordReplacer(result);
                     }
+                    // 取得できなかったプレースホルダーを空文字に置換
+                    result = LunaChatBukkit.stripUnresolvedPlaceholders(result);
+                    msg = new KeywordReplacer(result);
                 }
             } catch (NoClassDefFoundError e) {
                 // PlaceholderAPIが利用できない場合はスキップ
             }
         }
 
-        return new ClickableFormat(msg);
+        return new ClickableFormat(msg, member);
     }
 
     /**
@@ -288,5 +299,69 @@ public class ClickableFormat {
 
     public void replace(String keyword, String value) {
         message.replace(keyword, value);
+    }
+
+    /**
+     * Adventure API用のComponentを作成する
+     * displayNameComponentを直接埋め込み、shadowなどの装飾を保持する
+     *
+     * @return Adventure Component
+     */
+    public Component makeAdventureComponent() {
+        message.translateColorCode();
+
+        String text = message.toString();
+        net.kyori.adventure.text.TextComponent.Builder builder = Component.text();
+        Matcher matcher = Pattern.compile(PLACEHOLDER_PATTERN).matcher(text);
+        int lastIndex = 0;
+
+        while (matcher.find()) {
+            // マッチする箇所までの文字列を追加
+            if (lastIndex < matcher.start()) {
+                String beforeText = text.substring(lastIndex, matcher.start());
+                builder.append(LegacyComponentSerializer.legacySection().deserialize(beforeText));
+            }
+
+            // マッチした箇所の文字列を解析して追加
+            String type = matcher.group(1);
+            String displayText = matcher.group(2);
+            String hover = matcher.group(3);
+            String command = matcher.group(4);
+
+            // displayTextがmemberのdisplayNameと一致するか確認
+            // 一致する場合はdisplayNameComponentを使用（shadow等を保持）
+            Component clickableComponent;
+            if (member != null && displayText.equals(member.getDisplayName())) {
+                // memberのdisplayNameComponent（shadow付き）を使用
+                clickableComponent = member.getDisplayNameComponent();
+            } else {
+                // 通常のテキスト
+                clickableComponent = LegacyComponentSerializer.legacySection().deserialize(displayText);
+            }
+
+            // クリックイベントとホバーイベントを設定
+            if (!hover.isEmpty()) {
+                clickableComponent = clickableComponent.hoverEvent(
+                        net.kyori.adventure.text.event.HoverEvent.showText(Component.text(hover)));
+            }
+            if (type.equals("RUN_COMMAND")) {
+                clickableComponent = clickableComponent.clickEvent(
+                        net.kyori.adventure.text.event.ClickEvent.runCommand(command));
+            } else {
+                clickableComponent = clickableComponent.clickEvent(
+                        net.kyori.adventure.text.event.ClickEvent.suggestCommand(command));
+            }
+
+            builder.append(clickableComponent);
+            lastIndex = matcher.end();
+        }
+
+        // 残りの部分を追加
+        if (lastIndex < text.length()) {
+            String remaining = text.substring(lastIndex);
+            builder.append(LegacyComponentSerializer.legacySection().deserialize(remaining));
+        }
+
+        return builder.build();
     }
 }

@@ -7,6 +7,7 @@ package com.github.ucchyocean.lc3.member;
 
 import com.github.ucchyocean.lc3.LunaChat;
 import com.github.ucchyocean.lc3.LunaChatMode;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 /**
@@ -64,6 +65,20 @@ public abstract class ChannelMember implements Comparable<ChannelMember> {
      * @param message 送るメッセージ
      */
     public abstract void sendMessage(BaseComponent[] message);
+
+    /**
+     * メッセージを送る（Adventure API）
+     *
+     * @param message 送るメッセージ
+     */
+    public abstract void sendMessage(Component message);
+
+    /**
+     * プレイヤー表示名をComponentで返す（Adventure API）
+     *
+     * @return プレイヤー表示名のComponent
+     */
+    public abstract Component getDisplayNameComponent();
 
     /**
      * 発言者が今いるワールドのワールド名を取得する

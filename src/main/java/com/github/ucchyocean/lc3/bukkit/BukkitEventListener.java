@@ -17,6 +17,8 @@ import com.github.ucchyocean.lc3.messaging.BukkitChatMessage;
 import com.github.ucchyocean.lc3.util.ClickableFormat;
 import com.github.ucchyocean.lc3.util.Utility;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -408,15 +410,17 @@ public class BukkitEventListener implements Listener {
                 // 拡張プレースホルダーの置き換え
                 if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
                     message = PlaceholderAPI.setPlaceholders(event.getPlayer(), message);
+                    message = LunaChatBukkit.stripUnresolvedPlaceholders(message);
                 }
 
                 // 発言内容の送信
                 format.replace("%msg", message);
-                BaseComponent[] comps = format.makeTextComponent();
+                // Adventure API版のComponentを使用（shadow等の装飾を保持）
+                Component adventureComponent = format.makeAdventureComponent();
                 for (Player recipient : event.getRecipients()) {
                     ChannelMember cm = ChannelMember.getChannelMember(recipient);
                     if (cm != null) {
-                        cm.sendMessage(comps);
+                        cm.sendMessage(adventureComponent);
                     }
                 }
 
@@ -425,7 +429,7 @@ public class BukkitEventListener implements Listener {
 
                 // 設定が有効ならコンソールに表示する
                 if (config.isDisplayNormalChatOnConsole()) {
-                    LunaChat.getPlugin().log(Level.INFO, makeLegacyText(comps));
+                    LunaChat.getPlugin().log(Level.INFO, PlainTextComponentSerializer.plainText().serialize(adventureComponent));
                 }
 
             } else {
@@ -442,6 +446,7 @@ public class BukkitEventListener implements Listener {
                 // 拡張プレースホルダーの置き換え
                 if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
                     message = PlaceholderAPI.setPlaceholders(event.getPlayer(), message);
+                    message = LunaChatBukkit.stripUnresolvedPlaceholders(message);
                 }
 
                 // 発言内容の設定

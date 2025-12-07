@@ -5,6 +5,7 @@
  */
 package com.github.ucchyocean.lc3.member;
 
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -104,6 +105,26 @@ public class ChannelMemberBlock extends ChannelMemberBukkit {
      */
     public void sendMessage(BaseComponent[] message) {
         // do nothing.
+    }
+
+    /**
+     * メッセージを送る（Adventure API）、実際は何もせずにメッセージを捨てる
+     *
+     * @param message 送るメッセージ
+     */
+    @Override
+    public void sendMessage(Component message) {
+        // do nothing.
+    }
+
+    /**
+     * プレイヤー表示名をComponentで返す（Adventure API）
+     *
+     * @return プレイヤー表示名のComponent
+     */
+    @Override
+    public Component getDisplayNameComponent() {
+        return Component.text(sender.getName());
     }
 
     /**

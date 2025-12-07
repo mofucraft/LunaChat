@@ -10,6 +10,7 @@ import com.github.ucchyocean.lc3.LunaChatBukkit;
 import com.github.ucchyocean.lc3.bridge.VaultChatBridge;
 import com.github.ucchyocean.lc3.util.BlockLocation;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -117,6 +118,7 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
 
     /**
      * プレイヤー表示名を返す
+     * Adventure APIのdisplayNameからプレーンテキストを取得
      *
      * @return プレイヤー表示名
      * @see com.github.ucchyocean.lc.channel.ChannelPlayer#getDisplayName()
@@ -125,8 +127,13 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
     public String getDisplayName() {
         Player player = getPlayer();
         if (player != null) {
-            String displayName = player.getDisplayName();
-            return LunaChatBukkit.getInstance().enablePlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, displayName) : displayName;
+            // Adventure APIのdisplayName()からプレーンテキストを取得
+            String displayName = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(player.displayName());
+            if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+                displayName = PlaceholderAPI.setPlaceholders(player, displayName);
+                displayName = LunaChatBukkit.stripUnresolvedPlaceholders(displayName);
+            }
+            return displayName;
         }
         return getName();
     }
@@ -146,7 +153,11 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
         Player player = getPlayer();
         if (player != null) {
             String prefix = vault.getPlayerPrefix(player);
-            return LunaChatBukkit.getInstance().enablePlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, prefix) : prefix;
+            if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+                prefix = PlaceholderAPI.setPlaceholders(player, prefix);
+                prefix = LunaChatBukkit.stripUnresolvedPlaceholders(prefix);
+            }
+            return prefix;
         }
         return "";
     }
@@ -166,7 +177,11 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
         Player player = getPlayer();
         if (player != null) {
             String suffix = vault.getPlayerSuffix(player);
-            return LunaChatBukkit.getInstance().enablePlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, suffix) : suffix;
+            if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+                suffix = PlaceholderAPI.setPlaceholders(player, suffix);
+                suffix = LunaChatBukkit.stripUnresolvedPlaceholders(suffix);
+            }
+            return suffix;
         }
         return "";
     }
@@ -198,6 +213,34 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
         if (player != null) {
             player.spigot().sendMessage(message);
         }
+    }
+
+    /**
+     * メッセージを送る（Adventure API）
+     *
+     * @param message 送るメッセージ
+     */
+    @Override
+    public void sendMessage(Component message) {
+        if (message == null) return;
+        Player player = getPlayer();
+        if (player != null) {
+            player.sendMessage(message);
+        }
+    }
+
+    /**
+     * プレイヤー表示名をComponentで返す（Adventure API）
+     *
+     * @return プレイヤー表示名のComponent
+     */
+    @Override
+    public Component getDisplayNameComponent() {
+        Player player = getPlayer();
+        if (player != null) {
+            return player.displayName();
+        }
+        return Component.text(getName());
     }
 
     /**

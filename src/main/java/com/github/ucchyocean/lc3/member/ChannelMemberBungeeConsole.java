@@ -5,6 +5,7 @@
  */
 package com.github.ucchyocean.lc3.member;
 
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -128,6 +129,29 @@ public class ChannelMemberBungeeConsole extends ChannelMemberBungee {
     public void sendMessage(BaseComponent[] message) {
         if (message == null || message.length == 0) return;
         sender.sendMessage(message);
+    }
+
+    /**
+     * メッセージを送る（Adventure API）
+     * BungeeCordはAdventure APIに非対応のため、プレーンテキストで送信
+     *
+     * @param message 送るメッセージ
+     */
+    @Override
+    public void sendMessage(Component message) {
+        if (message == null) return;
+        String text = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(message);
+        sender.sendMessage(TextComponent.fromLegacyText(text));
+    }
+
+    /**
+     * プレイヤー表示名をComponentで返す（Adventure API）
+     *
+     * @return プレイヤー表示名のComponent
+     */
+    @Override
+    public Component getDisplayNameComponent() {
+        return Component.text(sender.getName());
     }
 
     /**

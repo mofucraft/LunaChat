@@ -1,5 +1,6 @@
 package com.github.ucchyocean.lc3.member;
 
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 public class ChannelMemberSystem extends ChannelMember {
@@ -40,6 +41,16 @@ public class ChannelMemberSystem extends ChannelMember {
     @Override
     public void sendMessage(BaseComponent[] message) {
         // do nothing.
+    }
+
+    @Override
+    public void sendMessage(Component message) {
+        // do nothing.
+    }
+
+    @Override
+    public Component getDisplayNameComponent() {
+        return Component.text(NAME);
     }
 
     @Override
