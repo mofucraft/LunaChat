@@ -127,8 +127,8 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
     public String getDisplayName() {
         Player player = getPlayer();
         if (player != null) {
-            // Adventure APIのdisplayName()からプレーンテキストを取得
-            String displayName = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(player.displayName());
+            // Adventure APIのdisplayName()からレガシー形式（カラーコード保持）で取得
+            String displayName = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().serialize(player.displayName());
             if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
                 displayName = PlaceholderAPI.setPlaceholders(player, displayName);
                 displayName = LunaChatBukkit.stripUnresolvedPlaceholders(displayName);

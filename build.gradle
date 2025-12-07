@@ -5,7 +5,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 repositories {
@@ -53,7 +53,8 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.jetbrains:annotations:23.0.0'
     testImplementation 'junit:junit:4.13.2'
-    compileOnly 'org.spigotmc:spigot-api:1.16.2-R0.1-SNAPSHOT'
+    // Paper API (Adventure API内蔵)
+    compileOnly 'io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT'
     compileOnly 'net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT'
     compileOnly 'net.md-5:bungeecord-chat:1.16-R0.3'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
@@ -68,15 +69,13 @@ dependencies {
 group = 'com.github.ucchyocean'
 version = '3.1.7'
 description = 'A powerfull chat channel plugin with IME (Kana-Kanji conversion) support'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 shadowJar {
     archiveFileName.set(project.name + "." + archiveExtension.get())
-
-    relocate 'com.google.gson', 'com.github.ucchyocean.lc.lib.com.google.gson'
-    relocate 'org.apache.commons.lang3', 'com.github.ucchyocean.lc.lib.org.apache.commons.lang3'
-    relocate 'org.jetbrains', 'com.github.ucchyocean.lc.lib.org.jetbrains'
-    relocate 'org.bstats', 'com.github.ucchyocean.lc.lib.org.bstats'
+    mergeServiceFiles()
+    // リロケーションはJava 21/ASM互換性問題でスキップ
+    // bStatsは初期化時にtry-catchでエラーハンドリング
 }
 
 publishing {

@@ -336,12 +336,26 @@ public class ClickableFormat {
                 // memberのdisplayNameComponent（shadow付き）を使用
                 Component displayNameComp = member.getDisplayNameComponent();
 
-                // 直前のテキストから最後の色コードを抽出してdisplayNameに適用
-                net.kyori.adventure.text.format.TextColor prefixColor = extractLastColor(text.substring(0, matcher.start()));
-                if (prefixColor != null) {
-                    // prefixの色を適用しつつ、shadow等の装飾は保持
-                    displayNameComp = applyColorToComponent(displayNameComp, prefixColor);
+                // スタッフ権限を持っているかチェック
+                // スタッフ権限あり: prefixの色を適用
+                // スタッフ権限なし（一般プレイヤー）: 白ベース+shadowを維持
+                boolean isStaff = false;
+                if (member instanceof ChannelMemberBukkit) {
+                    Player player = ((ChannelMemberBukkit) member).getPlayer();
+                    if (player != null) {
+                        isStaff = player.hasPermission("lunachat.staff")
+                                || player.hasPermission("mofucraft.staff");
+                    }
                 }
+
+                if (isStaff) {
+                    // スタッフの場合、prefixの色を適用
+                    net.kyori.adventure.text.format.TextColor prefixColor = extractLastColor(text.substring(0, matcher.start()));
+                    if (prefixColor != null) {
+                        displayNameComp = applyColorToComponent(displayNameComp, prefixColor);
+                    }
+                }
+                // 一般プレイヤーの場合は白ベース+shadowをそのまま維持
 
                 clickableComponent = displayNameComp;
             } else {
