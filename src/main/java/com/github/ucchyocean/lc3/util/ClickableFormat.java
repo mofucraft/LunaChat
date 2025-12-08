@@ -329,10 +329,12 @@ public class ClickableFormat {
             String hover = matcher.group(3);
             String command = matcher.group(4);
 
-            // displayTextがmemberのdisplayNameと一致するか確認
+            // displayTextがmemberのプレイヤー名と一致するか確認
+            // カラーコードを除去して比較（タイミングによるdisplayName変化を回避）
             // 一致する場合はdisplayNameComponentを使用（shadow等を保持）
             Component clickableComponent;
-            if (member != null && displayText.equals(member.getDisplayName())) {
+            String plainDisplayText = Utility.stripColorCode(displayText);
+            if (member != null && plainDisplayText.equals(member.getName())) {
                 // memberのdisplayNameComponent（shadow付き）を使用
                 Component displayNameComp = member.getDisplayNameComponent();
 
