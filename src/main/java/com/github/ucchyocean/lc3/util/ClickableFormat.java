@@ -350,12 +350,16 @@ public class ClickableFormat {
 
                 if (isStaff) {
                     // スタッフの場合、prefixの色を適用
-                    net.kyori.adventure.text.format.TextColor prefixColor = extractLastColor(text.substring(0, matcher.start()));
-                    if (prefixColor != null) {
-                        displayNameComp = applyColorToComponent(displayNameComp, prefixColor);
+                    // ただし、グラデーション（各文字が異なる色）の場合はスキップ
+                    if (!isGradientComponent(displayNameComp)) {
+                        net.kyori.adventure.text.format.TextColor prefixColor = extractLastColor(text.substring(0, matcher.start()));
+                        if (prefixColor != null) {
+                            displayNameComp = applyColorToComponent(displayNameComp, prefixColor);
+                        }
                     }
                 }
                 // 一般プレイヤーの場合は白ベース+shadowをそのまま維持
+                // グラデーションの場合もそのまま維持
 
                 clickableComponent = displayNameComp;
             } else {
@@ -448,6 +452,37 @@ public class ClickableFormat {
             case 'f' -> net.kyori.adventure.text.format.NamedTextColor.WHITE;
             default -> null;
         };
+    }
+
+    /**
+     * Componentがグラデーション（複数の子要素が異なる色を持つ）かどうかを判定
+     *
+     * @param component 判定対象のComponent
+     * @return グラデーションの場合true
+     */
+    private boolean isGradientComponent(Component component) {
+        if (!(component instanceof net.kyori.adventure.text.TextComponent textComp)) {
+            return false;
+        }
+
+        java.util.List<Component> children = textComp.children();
+        if (children.size() < 2) {
+            return false;
+        }
+
+        // 子要素の色を収集し、異なる色が2つ以上あればグラデーションと判定
+        java.util.Set<net.kyori.adventure.text.format.TextColor> colors = new java.util.HashSet<>();
+        for (Component child : children) {
+            net.kyori.adventure.text.format.TextColor color = child.color();
+            if (color != null) {
+                colors.add(color);
+                if (colors.size() >= 2) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
