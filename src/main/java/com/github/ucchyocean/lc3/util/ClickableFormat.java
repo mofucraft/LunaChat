@@ -362,23 +362,25 @@ public class ClickableFormat {
                 // 一般プレイヤーの場合は白ベース+shadowをそのまま維持
                 // グラデーションの場合もそのまま維持
 
-                clickableComponent = displayNameComp;
+                // イベントを全ての子コンポーネントに適切に適用
+                // MiniMessageが作成したネスト構造でもshadowが保持されるようにする
+                clickableComponent = applyEventsToComponent(displayNameComp, hover, command, type);
             } else {
                 // 通常のテキスト
                 clickableComponent = LegacyComponentSerializer.legacySection().deserialize(displayText);
-            }
 
-            // クリックイベントとホバーイベントを設定
-            if (!hover.isEmpty()) {
-                clickableComponent = clickableComponent.hoverEvent(
-                        net.kyori.adventure.text.event.HoverEvent.showText(Component.text(hover)));
-            }
-            if (type.equals("RUN_COMMAND")) {
-                clickableComponent = clickableComponent.clickEvent(
-                        net.kyori.adventure.text.event.ClickEvent.runCommand(command));
-            } else {
-                clickableComponent = clickableComponent.clickEvent(
-                        net.kyori.adventure.text.event.ClickEvent.suggestCommand(command));
+                // クリックイベントとホバーイベントを設定
+                if (!hover.isEmpty()) {
+                    clickableComponent = clickableComponent.hoverEvent(
+                            net.kyori.adventure.text.event.HoverEvent.showText(Component.text(hover)));
+                }
+                if (type.equals("RUN_COMMAND")) {
+                    clickableComponent = clickableComponent.clickEvent(
+                            net.kyori.adventure.text.event.ClickEvent.runCommand(command));
+                } else {
+                    clickableComponent = clickableComponent.clickEvent(
+                            net.kyori.adventure.text.event.ClickEvent.suggestCommand(command));
+                }
             }
 
             builder.append(clickableComponent);
@@ -392,6 +394,66 @@ public class ClickableFormat {
         }
 
         return builder.build();
+    }
+
+    /**
+     * コンポーネントにイベントを適用する（shadowなどの装飾を保持）
+     * MiniMessageが作成したネスト構造でも正しく動作するように、
+     * 全ての子コンポーネントにもイベントを再帰的に適用する
+     */
+    private Component applyEventsToComponent(Component component, String hover, String command, String type) {
+        // HoverEventとClickEventを作成
+        net.kyori.adventure.text.event.HoverEvent<?> hoverEvent = null;
+        if (!hover.isEmpty()) {
+            hoverEvent = net.kyori.adventure.text.event.HoverEvent.showText(Component.text(hover));
+        }
+
+        net.kyori.adventure.text.event.ClickEvent clickEvent;
+        if (type.equals("RUN_COMMAND")) {
+            clickEvent = net.kyori.adventure.text.event.ClickEvent.runCommand(command);
+        } else {
+            clickEvent = net.kyori.adventure.text.event.ClickEvent.suggestCommand(command);
+        }
+
+        return applyEventsRecursively(component, hoverEvent, clickEvent);
+    }
+
+    /**
+     * コンポーネントとその全ての子にイベントを再帰的に適用する
+     * これにより、どのレベルにshadowがあっても、イベントが正しく機能する
+     */
+    private Component applyEventsRecursively(Component component,
+            net.kyori.adventure.text.event.HoverEvent<?> hoverEvent,
+            net.kyori.adventure.text.event.ClickEvent clickEvent) {
+
+        if (component instanceof net.kyori.adventure.text.TextComponent textComp) {
+            // 現在のスタイルにイベントを追加
+            net.kyori.adventure.text.format.Style.Builder styleBuilder = textComp.style().toBuilder();
+            if (hoverEvent != null) {
+                styleBuilder.hoverEvent(hoverEvent);
+            }
+            if (clickEvent != null) {
+                styleBuilder.clickEvent(clickEvent);
+            }
+
+            // 子コンポーネントにも再帰的に適用
+            java.util.List<Component> newChildren = new java.util.ArrayList<>();
+            for (Component child : textComp.children()) {
+                newChildren.add(applyEventsRecursively(child, hoverEvent, clickEvent));
+            }
+
+            return textComp.style(styleBuilder.build()).children(newChildren);
+        }
+
+        // その他のコンポーネント型の場合
+        net.kyori.adventure.text.format.Style.Builder styleBuilder = component.style().toBuilder();
+        if (hoverEvent != null) {
+            styleBuilder.hoverEvent(hoverEvent);
+        }
+        if (clickEvent != null) {
+            styleBuilder.clickEvent(clickEvent);
+        }
+        return component.style(styleBuilder.build());
     }
 
     /**
