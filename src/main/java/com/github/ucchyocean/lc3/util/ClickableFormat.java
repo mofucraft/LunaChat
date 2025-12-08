@@ -337,17 +337,11 @@ public class ClickableFormat {
                 // memberのdisplayNameComponent（shadow付き）を使用
                 Component displayNameComp = member.getDisplayNameComponent();
 
-                // スタッフ権限を持っているかチェック
+                // スタッフ権限を持っているかチェック（ChannelMemberのhasPermissionを直接使用）
                 // スタッフ権限あり: prefixの色を適用
                 // スタッフ権限なし（一般プレイヤー）: 白ベース+shadowを維持
-                boolean isStaff = false;
-                if (member instanceof ChannelMemberBukkit) {
-                    Player player = ((ChannelMemberBukkit) member).getPlayer();
-                    if (player != null) {
-                        isStaff = player.hasPermission("lunachat.staff")
-                                || player.hasPermission("mofucraft.staff");
-                    }
-                }
+                boolean isStaff = member.hasPermission("lunachat.staff")
+                        || member.hasPermission("mofucraft.staff");
 
                 if (isStaff) {
                     // スタッフの場合、prefixの色を適用

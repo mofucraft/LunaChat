@@ -11,6 +11,7 @@ import com.github.ucchyocean.lc3.bridge.VaultChatBridge;
 import com.github.ucchyocean.lc3.util.BlockLocation;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -231,6 +232,7 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
 
     /**
      * プレイヤー表示名をComponentで返す（Adventure API）
+     * PlaceholderAPI経由でNameColorのMiniMessage形式名前を取得し、パースする
      *
      * @return プレイヤー表示名のComponent
      */
@@ -238,6 +240,21 @@ public class ChannelMemberPlayer extends ChannelMemberBukkit {
     public Component getDisplayNameComponent() {
         Player player = getPlayer();
         if (player != null) {
+            // PlaceholderAPIでNameColorのMiniMessage形式名前を取得
+            if (LunaChatBukkit.getInstance().enablePlaceholderAPI()) {
+                try {
+                    String miniMessageFormat = PlaceholderAPI.setPlaceholders(player, "%namecolor_name_minimessage%");
+                    // プレースホルダーが展開されたかチェック（未展開の場合はそのまま残る）
+                    if (miniMessageFormat != null && !miniMessageFormat.isEmpty()
+                            && !miniMessageFormat.contains("%namecolor_name_minimessage%")) {
+                        // MiniMessageでパースしてComponentを返す
+                        return MiniMessage.miniMessage().deserialize(miniMessageFormat);
+                    }
+                } catch (Exception e) {
+                    // MiniMessageのパースに失敗した場合はフォールバック
+                }
+            }
+            // フォールバック: player.displayName()を使用
             return player.displayName();
         }
         return Component.text(getName());
