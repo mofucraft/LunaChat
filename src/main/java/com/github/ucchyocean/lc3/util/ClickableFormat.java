@@ -136,13 +136,14 @@ public class ClickableFormat {
 
             // ChannelMember関連のキーワード置き換え
             if (withPlayerLink) {
-                String playerPMPlaceHolder = String.format(
+                // displayname/usernameにはマーカーを使用し、後でdisplayNameComponentに置換する
+                String displayNamePlaceHolder = String.format(
                         PLACEHOLDER_SUGGEST_COMMAND,
-                        member.getDisplayName(),
+                        DISPLAY_NAME_COMPONENT_PLACEHOLDER,
                         Messages.hoverPlayerName(member.getName()),
                         String.format(TELL_COMMAND_TEMPLATE, member.getName()));
-                msg.replace("%displayname", playerPMPlaceHolder);
-                msg.replace("%username", playerPMPlaceHolder);
+                msg.replace("%displayname", displayNamePlaceHolder);
+                msg.replace("%username", displayNamePlaceHolder);
                 msg.replace("%player", String.format(
                         PLACEHOLDER_SUGGEST_COMMAND,
                         member.getName(),
@@ -329,12 +330,10 @@ public class ClickableFormat {
             String hover = matcher.group(3);
             String command = matcher.group(4);
 
-            // displayTextがmemberのプレイヤー名と一致するか確認
-            // カラーコードを除去して比較（タイミングによるdisplayName変化を回避）
-            // 一致する場合はdisplayNameComponentを使用（shadow等を保持）
+            // displayTextがマーカーと一致するか確認
+            // マーカーの場合はdisplayNameComponentを使用（shadow/グラデーション等を保持）
             Component clickableComponent;
-            String plainDisplayText = Utility.stripColorCode(displayText);
-            if (member != null && plainDisplayText.equals(member.getName())) {
+            if (member != null && displayText.equals(DISPLAY_NAME_COMPONENT_PLACEHOLDER)) {
                 // memberのdisplayNameComponent（shadow付き）を使用
                 Component displayNameComp = member.getDisplayNameComponent();
 
