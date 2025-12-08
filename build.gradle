@@ -54,7 +54,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
     testImplementation 'junit:junit:4.13.2'
     // Paper API (Adventure API内蔵)
-    compileOnly 'io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     compileOnly 'net.md-5:bungeecord-api:1.16-R0.2-SNAPSHOT'
     compileOnly 'net.md-5:bungeecord-chat:1.16-R0.3'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
