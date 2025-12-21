@@ -67,7 +67,7 @@ dependencies {
 }
 
 group = 'com.github.ucchyocean'
-version = '3.1.8'
+version = '3.1.9'
 description = 'A powerfull chat channel plugin with IME (Kana-Kanji conversion) support'
 java.sourceCompatibility = JavaVersion.VERSION_21
 

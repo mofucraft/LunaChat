@@ -50,6 +50,8 @@ public class ClickableFormat {
             "＜type=(SUGGEST_COMMAND|RUN_COMMAND) text=\"([^\"]*)\" hover=\"([^\"]*)\" command=\"([^\"]*)\"＞";
     // Adventure API用のプレースホルダー（displayNameComponentを後から埋め込むため）
     private static final String DISPLAY_NAME_COMPONENT_PLACEHOLDER = "＜DISPLAY_NAME_COMPONENT＞";
+    // URLパターン（http:// または https:// で始まるURL）
+    private static final Pattern URL_PATTERN = Pattern.compile("(https?://[\\w/:%#$&?()~.=+\\-]+)");
 
     private final KeywordReplacer message;
     private ChannelMember member;
@@ -321,7 +323,7 @@ public class ClickableFormat {
             String beforeText = "";
             if (lastIndex < matcher.start()) {
                 beforeText = text.substring(lastIndex, matcher.start());
-                builder.append(LegacyComponentSerializer.legacySection().deserialize(beforeText));
+                builder.append(parseTextWithUrls(beforeText));
             }
 
             // マッチした箇所の文字列を解析して追加
@@ -382,6 +384,44 @@ public class ClickableFormat {
         }
 
         // 残りの部分を追加
+        if (lastIndex < text.length()) {
+            String remaining = text.substring(lastIndex);
+            builder.append(parseTextWithUrls(remaining));
+        }
+
+        return builder.build();
+    }
+
+    /**
+     * テキスト内のURLを検出し、クリック可能なリンクに変換する
+     *
+     * @param text 対象テキスト
+     * @return URLがクリック可能なComponent
+     */
+    private Component parseTextWithUrls(String text) {
+        net.kyori.adventure.text.TextComponent.Builder builder = Component.text();
+        Matcher urlMatcher = URL_PATTERN.matcher(text);
+        int lastIndex = 0;
+
+        while (urlMatcher.find()) {
+            // URL前のテキストを追加
+            if (lastIndex < urlMatcher.start()) {
+                String beforeUrl = text.substring(lastIndex, urlMatcher.start());
+                builder.append(LegacyComponentSerializer.legacySection().deserialize(beforeUrl));
+            }
+
+            // URLをクリック可能なリンクとして追加
+            String url = urlMatcher.group(1);
+            Component urlComponent = Component.text(url)
+                    .clickEvent(net.kyori.adventure.text.event.ClickEvent.openUrl(url))
+                    .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(
+                            Component.text("クリックしてリンクを開く")));
+            builder.append(urlComponent);
+
+            lastIndex = urlMatcher.end();
+        }
+
+        // 残りのテキストを追加
         if (lastIndex < text.length()) {
             String remaining = text.substring(lastIndex);
             builder.append(LegacyComponentSerializer.legacySection().deserialize(remaining));
