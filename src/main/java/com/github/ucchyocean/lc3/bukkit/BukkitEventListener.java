@@ -402,7 +402,7 @@ public class BukkitEventListener implements Listener {
                     format = ClickableFormat.makeFormat(f, ChannelMember.getChannelMember(event.getPlayer()));
                 } else {
                     String f = event.getFormat()
-                            .replace("%1$s", "%displayName")
+                            .replace("%1$s", "%displayname")
                             .replace("%2$s", "%msg");
                     format = ClickableFormat.makeFormat(f, ChannelMember.getChannelMember(event.getPlayer()));
                 }
